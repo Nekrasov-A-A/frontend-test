@@ -1,6 +1,5 @@
 <template>
-  <!-- <div id="app">  duplicate id -->
-  <div class="app">
+  <div id="app">
     <!-- В ТЗ указано получить список в компоненте List. Логичнее использовать VueX для передачи данных между копмонентами. -->
     <!-- Поэтому здесь не нужны props, только для currency -->
     <!-- Если в дальнейшем придется расширять приложение чтобы изменять currency, то удобнее его хранить во VueX и получать в копмонентах через getter -->
@@ -39,10 +38,8 @@ export default {
   padding: 0;
   box-sizing: border-box;
 }
-.app {
-  /*шрифт Avenir платный и не подключен  */
-  /* Nunito самый схожий, подключил его */
-  font-family: "Nunito Sans", Helvetica, Arial, sans-serif;
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
