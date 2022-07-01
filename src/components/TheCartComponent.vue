@@ -1,6 +1,6 @@
 <template>
   <div class="cards-wrapper">
-    <div v-for="(item, idx) in getCart" :key="item.title + idx">
+    <div v-for="(item, idx) in getCartForUI" :key="item.title + idx">
       <!-- :key="item.title + idx --- неповторяющийся примитив -->
       {{ item }}
     </div>
@@ -20,8 +20,9 @@ export default {
     // использовать unshift() при добавлении в массив cart
     // },
     ...mapGetters(["getCart"]),
+    getCartForUI() {
+      return [...this.getCart].reverse();
+    },
   },
 };
 </script>
-
-<style></style>

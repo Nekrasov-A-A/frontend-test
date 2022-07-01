@@ -1,27 +1,26 @@
-<!-- template must be first -->
+<!-- template не может быть последним -->
 <template>
-  <div class="header">
+  <header class="header">
     <h3>
       Товаров в корзине на:
-      {{
-        Number.isInteger(getTotalAmount)
-          ? getTotalAmount
-          : getTotalAmount.toFixed(2)
-      }}
-      {{ currency }}
+      {{ getTotalAmount }}
+      {{ getCurrency }}
     </h3>
-  </div>
+  </header>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
 export default {
-  name: "Header",
-  props: {
-    currency: String,
-  },
+  name: "TheHeaderComponent",
   computed: {
-    ...mapGetters(["getTotalAmount"]),
+    ...mapGetters(["getCart", "getCurrency"]),
+    getTotalAmount() {
+      return this.getCart.reduce(
+        (acc, val) => (acc += val.amount * val.price),
+        0
+      );
+    },
   },
   // --- Отказались от props в пользу VueX
   // data() {

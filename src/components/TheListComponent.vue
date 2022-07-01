@@ -1,12 +1,12 @@
 <template>
   <div class="product-list">
     <!-- add key -->
-    <div class="card" v-for="product in getProductsList" :key="product.id">
+    <div class="card" v-for="product in products" :key="product.id">
       <!-- для заголовков есть тег h -->
       <h3 class="card-title">{{ product.title }}</h3>
       <!-- add attr alt for <img> -->
       <img class="card-image" :src="product.image" :alt="product.title" />
-      <p class="card-price">Цена: {{ product.price }} {{ currency }}</p>
+      <p class="card-price">Цена: {{ product.price }} {{ getCurrency }}</p>
 
       <div>
         <!-- <input type="number" ref="amount" :id="product.id" /> -->
@@ -22,56 +22,51 @@
 <script>
 import { mapActions, mapMutations, mapGetters } from "vuex";
 export default {
-  props: {
-    currency: String,
-  },
   data() {
     return {
-      // products: [],
+      products: [],
       timer: "",
     };
   },
   computed: {
-    // cardsWidth() {
-    //   let width = window.innerWidth;
-    //   let count = 1;
-    //   if (width > "840px") {
-    //     count = 3;
-    //   } else if (width > "420px" && width < "840px") {
-    //     count = 2;
-    //   }
-
-    //   return 100 / count;
-    // },
-    // --- Grid + media
-    ...mapGetters(["getProductsList"]),
+    ...mapGetters(["getCurrency"]),
   },
+  // cardsWidth() {
+  //   let width = window.innerWidth;
+  //   let count = 1;
+  //   if (width > "840px") {
+  //     count = 3;
+  //   } else if (width > "420px" && width < "840px") {
+  //     count = 2;
+  //   }
+
+  //   return 100 / count;
+  // },
+  // --- Grid + media
+
   methods: {
     // startPricesMonitoring() {
     //   setInterval(this.getList, 2000);
     // },
     async getList() {
       let productsList = await this.getProductsListFromApi();
-      productsList.forEach((item) => (item.amount = 0));
-      this.setProductsList(productsList);
+      this.products = productsList;
+      this.products.forEach((product) => (product.amount = 0));
     },
     ...mapActions(["getProductsListFromApi"]),
-    ...mapMutations(["setProductsList", "setToCart", "setTotalAmount"]),
+    ...mapMutations(["setToCart"]),
     addToCart(product) {
       if (product.amount > 0) {
         // --- смешная валидация без показа ошибок
-        let totalPrice = product.price * product.amount;
         let payload = {
           amount: product.amount,
-          price: product.price, // --- не совсем понимаю зачем
-          totalPrice, // --- так логичнее
+          price: product.price,
           title: product.title,
         };
         // --- но лучше добавить
         // --- id: uuid() --- легкая библиотека с уникальными id
         // --- т.к нам рендерить массив этих значений
         this.setToCart(payload);
-        this.setTotalAmount(totalPrice);
       }
       //   let amount = this.$refs.amount.find(
       //     (input) => input.id === product.id
@@ -87,18 +82,19 @@ export default {
       //   this.$parent.cart.push(data);
     },
   },
-  async mounted() {
-    this.getList();
-    this.timer = setInterval(() => {
-      this.getList();
-    }, 2000);
+  async created() {
+    try {
+      await this.getList();
+      this.timer = setInterval(() => {
+        this.getList();
+      }, 2000);
+    } catch (e) {
+      console.log(e);
+    }
   },
   beforeDestroy() {
     clearInterval(this.timer);
   },
-  // created() { --- все асинхронные запросы в mounted + шаблон еще не отрисован
-  //   this.startPricesMonitoring();
-  // },
 };
 </script>
 
